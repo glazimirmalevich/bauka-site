@@ -1,0 +1,1384 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<title>SE.threat / Маратов Б.Ж. / 7M06306</title>
+<meta name="description" content="Магистрлік диссертация: әлеуметтік инженерия қауіпсіздікке қатер ретінде. Маратов Б.Ж., ЕҰУ, 2026.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../../shared/base.css">
+
+<style>
+  :root {
+    --bg: #0b0d10;
+    --bg-2: #0f1216;
+    --bg-3: #14181d;
+    --ink: #e6e7eb;
+    --ink-2: #b6bac2;
+    --muted: #7a7e87;
+    --line: #1c2026;
+    --line-2: #262a31;
+    --line-3: #343943;
+    --warn: #ff5160;
+    --warn-2: #ff7a85;
+    --good: #6affb0;
+    --good-2: #8bffc4;
+    --link: #7ad5ff;
+    --gold: #ffb84a;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+  html, body { background: var(--bg); color: var(--ink); }
+  body {
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.55;
+    font-feature-settings: "tnum", "ss01";
+    background-image:
+      linear-gradient(transparent 0, transparent calc(100% - 1px), rgba(255,255,255,.02) 100%),
+      linear-gradient(90deg, transparent 0, transparent calc(100% - 1px), rgba(255,255,255,.02) 100%);
+    background-size: 56px 56px;
+    background-attachment: fixed;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    body { background-attachment: scroll; }
+  }
+  ::selection { background: var(--good); color: var(--bg); }
+
+  /* PROGRESS */
+  .progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--good), var(--link));
+    transform: scaleX(0); transform-origin: 0 50%;
+    transition: transform .12s linear;
+    z-index: 60;
+  }
+
+  /* SCANLINES */
+  .scanlines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 40;
+    background-image: repeating-linear-gradient(180deg, rgba(255,255,255,.015) 0 1px, transparent 1px 3px);
+    mix-blend-mode: overlay; opacity: .75;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky; top: 0; z-index: 30;
+    background: rgba(11,13,16,.78);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px; padding: 13px 0;
+  }
+  .brand {
+    font-family: var(--mono); font-weight: 700; font-size: 13px;
+    letter-spacing: .02em; color: var(--ink); text-decoration: none;
+    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  }
+  .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 12px rgba(106,255,176,.7); }
+  .brand .mute { color: var(--muted); font-weight: 500; }
+  .nav-links {
+    display: flex; gap: 22px; font-size: 11.5px; color: var(--muted);
+    letter-spacing: .02em;
+  }
+  .nav-links a { text-decoration: none; transition: color .15s; position: relative; padding: 4px 0; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.is-active { color: var(--good); }
+  .nav-links a.is-active::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -3px;
+    height: 1px; background: var(--good);
+  }
+  .lang { display: flex; gap: 0; border: 1px solid var(--line-2); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+  .lang button {
+    padding: 6px 10px; font-family: var(--mono); font-size: 11px; letter-spacing: .04em;
+    color: var(--muted); transition: background .15s, color .15s;
+  }
+  .lang button.active { background: var(--ink); color: var(--bg); }
+  .lang button + button { border-left: 1px solid var(--line-2); }
+
+  .menu-btn {
+    display: none; padding: 6px 10px; font-family: var(--mono); font-size: 12px;
+    color: var(--ink); border: 1px solid var(--line-2);
+  }
+  @media (max-width: 980px) {
+    .nav-links { display: none; }
+    .menu-btn { display: inline-flex; }
+    .nav-links.open {
+      display: grid; gap: 14px; position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 18px 28px 22px;
+      font-size: 14px;
+    }
+  }
+
+  /* SECTION COMMON */
+  section { padding: 96px 0; border-bottom: 1px solid var(--line); position: relative; }
+  @media (max-width: 760px) { section { padding: 64px 0; } }
+
+  .sec-head {
+    display: grid; grid-template-columns: 1fr 1.6fr;
+    gap: 56px; margin-bottom: 64px; align-items: end;
+  }
+  .sec-head .meta {
+    font-family: var(--mono); color: var(--muted); font-size: 11px;
+    letter-spacing: .22em; text-transform: uppercase;
+  }
+  .sec-head .meta .num { color: var(--good); font-weight: 700; }
+  .sec-head .meta .slash { color: var(--line-3); margin: 0 8px; }
+  .h-sec {
+    font-family: var(--mono); font-weight: 500; font-size: clamp(28px, 3.6vw, 44px);
+    line-height: 1.1; margin: 0; letter-spacing: -.005em;
+  }
+  .h-sec .accent { color: var(--good); }
+  .sec-lead {
+    font-family: var(--sans); font-size: 16px; line-height: 1.65; color: var(--ink-2);
+    grid-column: 2 / 3; max-width: 62ch; margin: 18px 0 0;
+  }
+  @media (max-width: 760px) {
+    .sec-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 44px; }
+    .sec-lead { grid-column: 1; }
+  }
+
+  /* HERO */
+  .hero { position: relative; padding: 88px 0 104px; border-bottom: 1px solid var(--line); overflow: hidden; }
+  .hero-grid { display: grid; grid-template-columns: 64px 1fr; gap: 28px; align-items: start; }
+  .spine {
+    border-left: 1px solid var(--line-2); padding: 4px 0 4px 10px;
+    font-size: 10.5px; letter-spacing: .14em; color: var(--muted); text-transform: uppercase;
+    line-height: 1.9;
+  }
+  .spine .row { display: flex; gap: 6px; }
+  .spine .k { color: var(--good); }
+  .eyebrow {
+    font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--good); margin: 0 0 28px; display: flex; align-items: center; gap: 12px;
+  }
+  .eyebrow::before { content: ""; width: 18px; height: 1px; background: var(--good); }
+  .h-hero {
+    font-family: var(--mono); font-weight: 500;
+    font-size: clamp(28px, 4.4vw, 54px); line-height: 1.08;
+    letter-spacing: -.01em; margin: 0 0 28px; color: var(--ink);
+    max-width: 20ch;
+  }
+  .h-hero .cursor { display: inline-block; width: .5ch; height: 1em; background: var(--good); margin-left: 6px; vertical-align: -3px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .lead {
+    font-family: var(--sans); font-size: 16px; line-height: 1.62; color: var(--ink-2);
+    max-width: 60ch; margin: 0 0 36px;
+  }
+  .hero-meta {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px; padding-top: 28px; border-top: 1px solid var(--line);
+    font-size: 12px;
+  }
+  .hero-meta dt { color: var(--muted); letter-spacing: .12em; text-transform: uppercase; font-size: 10.5px; margin: 0 0 6px; font-weight: 500; }
+  .hero-meta dd { margin: 0; color: var(--ink); font-weight: 500; }
+  @media (max-width: 760px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .spine { writing-mode: horizontal-tb; border-left: 0; padding: 0; border-bottom: 1px solid var(--line-2); padding-bottom: 14px; }
+    .hero-meta { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* PROBLEM STATS */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .stat {
+    border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    padding: 36px 32px 30px; position: relative;
+    background: linear-gradient(180deg, rgba(255,81,96,.025), transparent 60%);
+  }
+  .stat .tag {
+    position: absolute; top: 14px; right: 16px;
+    font-size: 10px; color: var(--warn); letter-spacing: .14em;
+    border: 1px solid rgba(255,81,96,.4); padding: 2px 6px;
+  }
+  .stat-val {
+    font-family: var(--mono); font-weight: 700; color: var(--warn);
+    font-size: clamp(56px, 9vw, 104px); line-height: 1; letter-spacing: -.02em;
+    font-feature-settings: "tnum";
+    display: flex; align-items: baseline; gap: 4px;
+  }
+  .stat-val .unit { font-size: .4em; color: var(--ink-2); font-weight: 500; letter-spacing: .02em; white-space: nowrap; }
+  .stat-val .pre { font-size: .35em; color: var(--ink-2); font-weight: 500; align-self: baseline; }
+  .stat-val { flex-wrap: nowrap; }
+  .stat-label { color: var(--ink); font-family: var(--sans); font-size: 14.5px; line-height: 1.5; margin: 16px 0 6px; max-width: 28ch; }
+  .stat-src { color: var(--muted); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+  @media (max-width: 760px) { .stats { grid-template-columns: 1fr; } }
+
+  /* GOALS */
+  .goals-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: start; }
+  .goals-main-label, .goals-tasks-label {
+    font-family: var(--mono); color: var(--good); font-size: 11px; letter-spacing: .22em;
+    text-transform: uppercase; margin: 0 0 16px;
+  }
+  .goals-main-body {
+    font-family: var(--sans); font-size: 19px; line-height: 1.5; color: var(--ink);
+    max-width: 36ch;
+    border-left: 2px solid var(--good); padding-left: 22px;
+  }
+  .task-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .task-list li {
+    display: grid; grid-template-columns: 56px 1fr; gap: 18px; align-items: start;
+    padding: 16px 0; border-top: 1px solid var(--line);
+    font-family: var(--sans); font-size: 15.5px; color: var(--ink); line-height: 1.5;
+  }
+  .task-list li:last-child { border-bottom: 1px solid var(--line); }
+  .task-list .n {
+    font-family: var(--mono); font-weight: 700; color: var(--good);
+    font-size: 13px; letter-spacing: .04em; padding-top: 2px;
+    white-space: nowrap;
+  }
+  .task-list .n::before { content: "["; color: var(--muted); margin-right: 4px; }
+  .task-list .n::after { content: "]"; color: var(--muted); margin-left: 4px; }
+  @media (max-width: 920px) { .goals-grid { grid-template-columns: 1fr; gap: 36px; } }
+
+  /* NOVELTY */
+  .novelty-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .novelty-card {
+    background: var(--bg); padding: 36px 32px;
+    transition: background .2s;
+    position: relative;
+  }
+  .novelty-card:hover { background: var(--bg-2); }
+  .novelty-card .marker {
+    font-family: var(--mono); color: var(--good); font-size: 11px;
+    letter-spacing: .22em; margin: 0 0 14px;
+  }
+  .novelty-card h3 {
+    font-family: var(--mono); font-weight: 500; font-size: 22px; color: var(--ink);
+    margin: 0 0 14px; letter-spacing: -.005em;
+  }
+  .novelty-card p {
+    font-family: var(--sans); color: var(--ink-2); font-size: 14.5px; line-height: 1.6;
+    margin: 0; max-width: 38ch;
+  }
+  @media (max-width: 760px) { .novelty-grid { grid-template-columns: 1fr; } }
+
+  /* ATTACKS TABLE */
+  .table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    font-family: var(--mono);
+  }
+  .table th {
+    text-align: left; padding: 0 16px 14px;
+    color: var(--muted); font-size: 11px; font-weight: 500;
+    letter-spacing: .18em; text-transform: uppercase;
+    border-bottom: 1px solid var(--line-2);
+  }
+  .table th:first-child { padding-left: 0; }
+  .table th:last-child { padding-right: 0; text-align: right; }
+  .table tbody tr { transition: background .15s; }
+  .table tbody tr:hover { background: var(--bg-2); }
+  .table tbody td {
+    padding: 18px 16px; border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .table tbody td:first-child { padding-left: 0; }
+  .table tbody td:last-child { padding-right: 0; text-align: right; }
+  .table .name {
+    color: var(--ink); font-weight: 500; font-size: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .table .name .hash { color: var(--good); font-size: 11px; opacity: .7; }
+  .table .desc { color: var(--ink-2); font-family: var(--sans); font-size: 14.5px; line-height: 1.5; }
+  .pill {
+    display: inline-block; padding: 3px 10px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em;
+    text-transform: uppercase; border: 1px solid; border-radius: 2px;
+  }
+  .pill.high { color: var(--warn); border-color: rgba(255,81,96,.5); background: rgba(255,81,96,.05); }
+  .pill.mid { color: var(--gold); border-color: rgba(255,184,74,.45); background: rgba(255,184,74,.05); }
+  .pill.low { color: var(--good); border-color: rgba(106,255,176,.35); background: rgba(106,255,176,.05); }
+
+  .principles {
+    margin-top: 40px; padding: 22px 24px;
+    border: 1px solid var(--line-2); border-left: 2px solid var(--gold);
+    background: var(--bg-2);
+  }
+  .principles .lbl {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold); margin: 0 0 8px;
+  }
+  .principles .body { font-family: var(--sans); font-size: 14.5px; color: var(--ink-2); margin: 0; line-height: 1.6; }
+
+  @media (max-width: 760px) {
+    .table thead { display: none; }
+    .table, .table tbody, .table tr, .table td { display: block; width: 100%; }
+    .table tbody tr { padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .table tbody td { padding: 4px 0 !important; text-align: left !important; border: 0; }
+    .table tbody td:last-child { margin-top: 8px; }
+  }
+
+  /* VULNS */
+  .vulns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .vuln-col { background: var(--bg); padding: 32px 28px; }
+  .vuln-col .head {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 8px;
+  }
+  .vuln-col .head::before { content: "// "; color: var(--good); }
+  .vuln-col h3 {
+    font-family: var(--mono); font-weight: 500; font-size: 20px; color: var(--ink);
+    margin: 0 0 22px;
+  }
+  .vuln-col ul {
+    list-style: none; padding: 0; margin: 0;
+    font-family: var(--sans); color: var(--ink-2); font-size: 14.5px;
+  }
+  .vuln-col li { padding: 12px 0; border-top: 1px solid var(--line); }
+  .vuln-col li::before { content: "−"; color: var(--warn); margin-right: 10px; font-family: var(--mono); }
+  .vuln-col li:first-child { border-top: 0; padding-top: 0; }
+  @media (max-width: 760px) { .vulns-grid { grid-template-columns: 1fr; } }
+
+  .weak-box {
+    margin-top: 40px; border: 1px solid var(--line-2);
+    background: var(--bg-2);
+  }
+  .weak-box .head {
+    padding: 16px 24px; border-bottom: 1px solid var(--line-2);
+    font-family: var(--mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--warn); display: flex; align-items: center; gap: 10px;
+  }
+  .weak-box .head::before { content: "!"; display: inline-grid; place-items: center; width: 18px; height: 18px; border: 1px solid var(--warn); border-radius: 50%; font-weight: 700; }
+  .weak-list { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .weak-item { padding: 24px; border-right: 1px solid var(--line-2); }
+  .weak-item:last-child { border-right: 0; }
+  .weak-item .name {
+    font-family: var(--mono); font-weight: 500; color: var(--ink);
+    font-size: 15px; margin: 0 0 8px;
+  }
+  .weak-item .name::after { content: " //"; color: var(--muted); }
+  .weak-item .body { font-family: var(--sans); color: var(--ink-2); font-size: 14px; margin: 0; line-height: 1.55; }
+  @media (max-width: 760px) {
+    .weak-list { grid-template-columns: 1fr; }
+    .weak-item { border-right: 0; border-bottom: 1px solid var(--line-2); }
+    .weak-item:last-child { border-bottom: 0; }
+  }
+
+  /* ARCHITECTURE */
+  .arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  @media (max-width: 980px) { .arch-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  .layers { display: grid; gap: 8px; counter-reset: layer; }
+  .layer {
+    display: grid; grid-template-columns: 32px 1fr auto; gap: 16px; align-items: center;
+    padding: 18px 22px; border: 1px solid var(--line-2);
+    background: var(--bg-2); transition: border-color .2s, background .2s;
+    position: relative;
+  }
+  .layer:hover { border-color: var(--good); background: var(--bg-3); }
+  .layer::before {
+    counter-increment: layer; content: "0" counter(layer);
+    font-family: var(--mono); color: var(--muted); font-size: 11px; letter-spacing: .14em;
+  }
+  .layer .name { font-family: var(--mono); font-weight: 500; color: var(--ink); font-size: 15px; }
+  .layer .tech { font-family: var(--sans); color: var(--ink-2); font-size: 13.5px; }
+
+  .stack-head {
+    font-family: var(--mono); color: var(--good); font-size: 11px; letter-spacing: .22em;
+    text-transform: uppercase; margin: 0 0 18px;
+  }
+  .stack-tags { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .stack-tag {
+    display: grid; grid-template-columns: 1fr auto; gap: 16px;
+    background: var(--bg); padding: 14px 18px; align-items: baseline;
+  }
+  .stack-tag .name { font-family: var(--mono); font-weight: 500; color: var(--link); font-size: 14px; }
+  .stack-tag .role { font-family: var(--sans); color: var(--muted); font-size: 12.5px; text-align: right; }
+
+  /* PLATFORM */
+  .plat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .plat-card { background: var(--bg); padding: 28px; }
+  .plat-card .num {
+    font-family: var(--mono); color: var(--good); font-size: 11px; letter-spacing: .18em; margin: 0 0 14px;
+  }
+  .plat-card .num::before { content: "F"; color: var(--muted); }
+  .plat-card h3 { font-family: var(--mono); font-weight: 500; font-size: 18px; color: var(--ink); margin: 0 0 12px; }
+  .plat-card p { font-family: var(--sans); color: var(--ink-2); font-size: 14px; line-height: 1.6; margin: 0; }
+  @media (max-width: 920px) { .plat-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .plat-grid { grid-template-columns: 1fr; } }
+
+  .sec-block {
+    margin-top: 56px; border: 1px solid var(--line-2); padding: 28px 28px 24px;
+    background: var(--bg-2);
+  }
+  .sec-block .title-row {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 24px;
+    border-bottom: 1px solid var(--line-2); padding-bottom: 18px; margin-bottom: 22px;
+  }
+  .sec-block h3 { font-family: var(--mono); font-weight: 500; font-size: 18px; color: var(--ink); margin: 0; }
+  .sec-block .sub { font-family: var(--sans); color: var(--muted); font-size: 13px; }
+  .sec-rings { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--line-2); }
+  .sec-ring { background: var(--bg-2); padding: 18px 14px; }
+  .sec-ring .name { font-family: var(--mono); font-weight: 500; color: var(--good); font-size: 13px; margin: 0 0 6px; }
+  .sec-ring .body { font-family: var(--sans); color: var(--ink-2); font-size: 12.5px; line-height: 1.5; margin: 0; }
+  @media (max-width: 920px) { .sec-rings { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 520px) { .sec-rings { grid-template-columns: repeat(2, 1fr); } }
+
+  .cert-strip {
+    margin-top: 24px; padding: 16px 20px;
+    border: 1px dashed var(--line-3);
+    display: flex; gap: 18px; align-items: baseline; flex-wrap: wrap;
+  }
+  .cert-strip .lbl { font-family: var(--mono); color: var(--gold); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
+  .cert-strip .body { font-family: var(--sans); color: var(--ink-2); font-size: 14px; }
+
+  /* RESULTS */
+  .results-grid { display: grid; gap: 22px; }
+  .row {
+    display: grid; grid-template-columns: 1fr 56px 1fr 120px;
+    gap: 28px; align-items: center;
+    padding: 22px 0; border-top: 1px solid var(--line);
+  }
+  .row:last-child { border-bottom: 1px solid var(--line); }
+  .metric-name { font-family: var(--sans); font-size: 16px; color: var(--ink); letter-spacing: -.005em; }
+  .arrow { font-family: var(--mono); color: var(--muted); text-align: center; font-size: 18px; }
+  .bar-wrap { position: relative; height: 26px; background: var(--line); border: 1px solid var(--line-2); }
+  .bar-wrap .fill {
+    position: absolute; top: 0; left: 0; bottom: 0; width: 0;
+    background: var(--good); transition: width 1.1s cubic-bezier(.22,.8,.3,1);
+  }
+  .bar-wrap .fill.warn { background: var(--warn); }
+  .delta {
+    font-family: var(--mono); font-weight: 700; font-size: 22px;
+    text-align: right; font-feature-settings: "tnum";
+  }
+  .delta.warn { color: var(--warn); }
+  .delta.good { color: var(--good); }
+  .results-meta {
+    margin-top: 32px; display: flex; justify-content: space-between; align-items: baseline;
+    color: var(--muted); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    border-top: 1px solid var(--line); padding-top: 18px;
+  }
+  @media (max-width: 760px) {
+    .row { grid-template-columns: 1fr 90px; column-gap: 18px; row-gap: 10px; }
+    .arrow, .bar-wrap { grid-column: 1 / -1; }
+    .arrow { display: none; }
+    .delta { justify-self: end; }
+  }
+
+  /* DEPARTMENTS */
+  .dept-table { width: 100%; border-collapse: separate; border-spacing: 0; font-family: var(--mono); }
+  .dept-table th {
+    text-align: left; padding: 0 18px 14px; color: var(--muted); font-size: 11px;
+    font-weight: 500; letter-spacing: .18em; text-transform: uppercase;
+    border-bottom: 1px solid var(--line-2);
+  }
+  .dept-table th:first-child { padding-left: 0; }
+  .dept-table th.num-col { text-align: right; }
+  .dept-table tbody td {
+    padding: 14px 18px; border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .dept-table tbody td:first-child { padding-left: 0; }
+  .dept-table .dept-name { color: var(--ink); font-family: var(--sans); font-weight: 500; font-size: 15px; display: flex; align-items: center; gap: 10px; }
+  .dept-table .rank { color: var(--good); font-family: var(--mono); font-size: 11px; opacity: .6; }
+  .dept-num { text-align: right; font-feature-settings: "tnum"; font-family: var(--mono); font-size: 14px; }
+  .dept-cell {
+    display: inline-grid; grid-template-columns: 60px 110px;
+    gap: 12px; align-items: center; justify-self: end;
+  }
+  .dept-cell .val { color: var(--ink); }
+  .dept-cell .spark { height: 4px; background: var(--line); position: relative; overflow: hidden; }
+  .dept-cell .spark .seg { position: absolute; left: 0; top: 0; bottom: 0; }
+  .dept-cell.up .spark .seg { background: var(--good); }
+  .dept-cell.down .spark .seg { background: var(--warn); }
+  .dept-cell.up .val { color: var(--good); }
+  .dept-cell.down .val { color: var(--warn); }
+  .dept-cell.flat .spark .seg { background: var(--gold); }
+  .dept-cell.flat .val { color: var(--ink); }
+  @media (max-width: 760px) {
+    .dept-table { font-size: 13px; }
+    .dept-table thead { display: none; }
+    .dept-table, .dept-table tbody, .dept-table tr, .dept-table td { display: block; width: 100%; }
+    .dept-table tbody tr { padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .dept-table tbody td { padding: 6px 0 !important; text-align: left !important; border: 0; }
+    .dept-cell { justify-self: start; grid-template-columns: 60px 1fr; min-width: 200px; }
+  }
+
+  /* RISK TRANSITIONS */
+  .risk-list { display: grid; gap: 14px; }
+  .risk-row {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: 28px; align-items: center;
+    padding: 22px 24px; border: 1px solid var(--line-2);
+    background: var(--bg-2);
+  }
+  .risk-side { display: grid; gap: 8px; }
+  .risk-side .name { font-family: var(--mono); color: var(--muted); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
+  .risk-side .val-row { display: flex; align-items: baseline; gap: 14px; }
+  .risk-side .val { font-family: var(--mono); font-weight: 700; font-size: 30px; font-feature-settings: "tnum"; }
+  .risk-side .lbl {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em;
+    text-transform: uppercase; padding: 3px 8px; border: 1px solid;
+  }
+  .risk-side.from .val, .risk-side.from .lbl { color: var(--warn); border-color: rgba(255,81,96,.4); }
+  .risk-side.from.mid .val, .risk-side.from.mid .lbl { color: var(--gold); border-color: rgba(255,184,74,.4); }
+  .risk-side.to .val, .risk-side.to .lbl { color: var(--good); border-color: rgba(106,255,176,.4); }
+  .risk-side.to.high .val, .risk-side.to.high .lbl { color: var(--gold); border-color: rgba(255,184,74,.4); }
+  .risk-arrow {
+    font-family: var(--mono); font-size: 22px; color: var(--good);
+    border: 1px solid var(--line-2); padding: 6px 14px;
+  }
+  .risk-side .name-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .risk-side .name-row .head {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--muted); opacity: .6;
+  }
+  .risk-metric { margin-bottom: 8px; }
+  .risk-row > .risk-metric { grid-column: 1 / -1; font-family: var(--mono); color: var(--ink); font-size: 15px; font-weight: 500; }
+  .risk-row { grid-template-rows: auto auto; grid-template-columns: 1fr auto 1fr; }
+  .risk-row > .risk-metric { grid-row: 1; grid-column: 1 / -1; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
+  .risk-row > .risk-side.from { grid-row: 2; grid-column: 1; }
+  .risk-row > .risk-arrow { grid-row: 2; grid-column: 2; align-self: center; }
+  .risk-row > .risk-side.to { grid-row: 2; grid-column: 3; }
+  @media (max-width: 760px) {
+    .risk-row { grid-template-columns: 1fr; }
+    .risk-row > .risk-side.from { grid-column: 1; grid-row: 2; }
+    .risk-row > .risk-arrow { grid-column: 1; grid-row: 3; justify-self: start; }
+    .risk-row > .risk-side.to { grid-column: 1; grid-row: 4; }
+  }
+  .risk-foot {
+    margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase;
+  }
+  .risk-foot b { color: var(--good); font-weight: 700; }
+
+  /* COMPARE */
+  .cmp-wrap { overflow-x: auto; }
+  .cmp-table {
+    width: 100%; min-width: 760px;
+    border-collapse: separate; border-spacing: 0; font-family: var(--mono);
+  }
+  .cmp-table th, .cmp-table td { padding: 14px 16px; vertical-align: middle; }
+  .cmp-table thead th {
+    border-bottom: 1px solid var(--line-2);
+    color: var(--muted); font-size: 11px; letter-spacing: .18em;
+    text-transform: uppercase; font-weight: 500; text-align: left;
+  }
+  .cmp-table thead th.ours { color: var(--good); }
+  .cmp-table thead th:first-child { padding-left: 0; }
+  .cmp-table tbody td {
+    border-bottom: 1px solid var(--line);
+    font-family: var(--sans); color: var(--ink-2); font-size: 14px;
+  }
+  .cmp-table tbody td:first-child { padding-left: 0; color: var(--ink); font-family: var(--mono); font-weight: 500; font-size: 13.5px; letter-spacing: .04em; }
+  .cmp-table tbody td.ours { background: rgba(106,255,176,.04); color: var(--good); font-family: var(--mono); font-weight: 500; font-size: 13.5px; }
+  .cmp-table tbody tr:hover td { background: rgba(255,255,255,.012); }
+  .cmp-table tbody tr:hover td.ours { background: rgba(106,255,176,.07); }
+
+  .roi-strip {
+    margin-top: 36px; padding: 22px 28px;
+    border: 1px solid rgba(106,255,176,.3); background: rgba(106,255,176,.04);
+    display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center;
+  }
+  .roi-strip .roi {
+    font-family: var(--mono); font-weight: 700; color: var(--good);
+    font-size: clamp(36px, 6vw, 56px); line-height: 1; font-feature-settings: "tnum";
+  }
+  .roi-strip .body { font-family: var(--sans); color: var(--ink-2); font-size: 15px; }
+  .roi-strip .body b { color: var(--ink); }
+
+  /* CONCLUSION */
+  .conc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); counter-reset: conc; }
+  .conc-item {
+    background: var(--bg); padding: 32px 28px;
+    display: grid; grid-template-columns: 40px 1fr; gap: 18px; align-items: start;
+    transition: background .2s;
+  }
+  .conc-item:hover { background: var(--bg-2); }
+  .conc-item::before {
+    counter-increment: conc; content: counter(conc, decimal-leading-zero);
+    font-family: var(--mono); font-weight: 700; color: var(--good); font-size: 14px;
+    border-right: 1px solid var(--good); padding-right: 14px; align-self: stretch;
+    padding-top: 2px;
+  }
+  .conc-item p {
+    font-family: var(--sans); color: var(--ink); font-size: 15px; line-height: 1.55;
+    margin: 0;
+  }
+  @media (max-width: 760px) { .conc-grid { grid-template-columns: 1fr; } }
+
+  /* THANKS */
+  .thanks { padding: 120px 0; text-align: left; border-bottom: 1px solid var(--line); position: relative; overflow: hidden; }
+  .thanks::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 30% 50%, rgba(106,255,176,.06), transparent 60%);
+    pointer-events: none;
+  }
+  .thanks .eyebrow { color: var(--good); position: relative; z-index: 1; }
+  .h-thanks {
+    font-family: var(--mono); font-weight: 700; font-size: clamp(60px, 14vw, 180px);
+    line-height: .9; letter-spacing: -.03em; color: var(--ink); margin: 0 0 32px;
+    position: relative; z-index: 1;
+  }
+  .h-thanks .accent { color: var(--good); }
+  .thanks-body {
+    font-family: var(--sans); font-size: 18px; color: var(--ink-2); margin: 0;
+    max-width: 36ch; position: relative; z-index: 1;
+  }
+  @media (max-width: 760px) { .thanks { padding: 72px 0; } }
+
+  /* FOOTER */
+  footer { padding: 64px 0 80px; }
+  .foot {
+    display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: end;
+  }
+  .foot .who { font-family: var(--mono); font-weight: 500; font-size: 18px; color: var(--ink); }
+  .foot .meta-list { display: grid; gap: 4px; margin-top: 10px; color: var(--muted); font-size: 12.5px; letter-spacing: .04em; }
+  .foot .note { color: var(--ink-2); font-family: var(--sans); font-size: 13px; max-width: 36ch; text-align: right; }
+  .foot .uni { display: block; margin-bottom: 14px; }
+  @media (max-width: 760px) { .foot { grid-template-columns: 1fr; } .foot .note { text-align: left; } }
+
+  .home-link {
+    position: fixed; left: 18px; bottom: 18px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .14em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--line-2); padding: 6px 10px;
+    background: rgba(11,13,16,.92);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    text-transform: uppercase; transition: color .15s, border-color .15s, opacity .2s;
+    z-index: 25;
+  }
+  .home-link:hover { color: var(--ink); border-color: var(--line-3); }
+  @media (max-width: 760px) {
+    .home-link { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .h-hero .cursor { animation: none; opacity: .8; }
+    body { background-attachment: scroll; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" data-progress aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand">
+      <span class="dot" aria-hidden="true"></span>
+      <span data-i18n="navBrand">Маратов Б.Ж.</span>
+      <span class="mute">/ SE.threat</span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Section navigation">
+      <a href="#problem" data-spy data-i18n="navProblem">Мәселе</a>
+      <a href="#novelty" data-spy data-i18n="navNovelty">Жаңалық</a>
+      <a href="#platform" data-spy data-i18n="navPlatform">Платформа</a>
+      <a href="#results" data-spy data-i18n="navResults">Нәтижелер</a>
+      <a href="#compare" data-spy data-i18n="navCompare">Салыстыру</a>
+      <a href="#conclusion" data-spy data-i18n="navConclusion">Қорытынды</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="kk" data-i18n="langKk" aria-pressed="true">ҚАЗ</button>
+      <button type="button" data-lang="ru" data-i18n="langRu" aria-pressed="false">RU</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ====== HERO ====== -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="spine" aria-hidden="true">
+          <div class="row"><span class="k">CODE</span><span>7M06306</span></div>
+          <div class="row"><span class="k">YEAR</span><span>2026</span></div>
+          <div class="row"><span class="k">CITY</span><span>AST</span></div>
+          <div class="row"><span class="k">VER</span><span>1.0</span></div>
+        </div>
+        <div>
+          <p class="eyebrow" data-i18n="heroEyebrow">Л.Н. Гумилев атындағы ЕҰУ · 7M06306 · 2026</p>
+          <h1 class="h-hero" id="hero-title">
+            <span data-i18n="heroTitle">Әлеуметтік инженерия қауіпсіздікке қатер ретінде: қызметкерлерді қорғау және оқыту әдістері</span><span class="cursor" aria-hidden="true"></span>
+          </h1>
+          <p class="lead" data-i18n="heroLead">Магистрлік диссертация. Кешенді әдістеме және ашық бастапқы кодты оқыту платформасы.</p>
+
+          <dl class="hero-meta">
+            <div><dt data-i18n="heroAuthorLabel">Магистрант</dt><dd data-i18n="heroAuthor">Маратов Бауыржан Жанатович</dd></div>
+            <div><dt data-i18n="heroSupervisorLabel">Ғылыми жетекші</dt><dd data-i18n="heroSupervisor">Сагиндыков К.М.</dd></div>
+            <div><dt data-i18n="heroDegreeLabel">Мамандық</dt><dd data-i18n="heroDegree">Ақпараттық қауіпсіздік жүйелері</dd></div>
+            <div><dt data-i18n="heroPlaceLabel">Орны</dt><dd data-i18n="heroPlace">Астана, 2026</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== PROBLEM ====== -->
+  <section id="problem" class="reveal" aria-labelledby="problem-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">01</span><span class="slash">/</span><span data-i18n="problemEyebrow">Зерттеудің өзектілігі</span></div>
+        <div><h2 class="h-sec" id="problem-title" data-i18n="problemTitle">Ең осал буын. Адам.</h2></div>
+        <p class="sec-lead" data-i18n="problemLead">Брандмауэрлер, антивирустар мен IDS жүйелері қолданылса да, қауіпсіздік тізбегіндегі ең осал буын адамның өзі.</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="tag">RISK</span>
+          <div class="stat-val"><span class="count" data-target="82" data-dec="0">0</span><span class="unit">%</span></div>
+          <p class="stat-label" data-i18n="problemStat1Label">АҚ инциденттерінде адам факторы</p>
+          <div class="stat-src" data-i18n="problemStat1Source">2022</div>
+        </div>
+        <div class="stat">
+          <span class="tag">LOSS</span>
+          <div class="stat-val"><span class="pre">$</span><span class="count" data-target="160" data-dec="0">0</span><span class="unit">M</span></div>
+          <p class="stat-label" data-i18n="problemStat2Label">Фишингтен жылдық залал</p>
+          <div class="stat-src" data-i18n="problemStat2Source">FBI IC3, 2022</div>
+        </div>
+        <div class="stat">
+          <span class="tag">HUMAN</span>
+          <div class="stat-val"><span class="count" data-target="68" data-dec="0">0</span><span class="unit">%</span></div>
+          <p class="stat-label" data-i18n="problemStat3Label">Бұзудың негізгі себебі. Адам.</p>
+          <div class="stat-src" data-i18n="problemStat3Source">Verizon DBIR, 2024</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== GOALS ====== -->
+  <section id="goals" class="reveal" aria-labelledby="goals-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">02</span><span class="slash">/</span><span data-i18n="goalsEyebrow">Зерттеудің мақсаты мен міндеттері</span></div>
+        <div><h2 class="h-sec" id="goals-title" data-i18n="goalsTitle">Не істелді.</h2></div>
+      </div>
+
+      <div class="goals-grid">
+        <div>
+          <p class="goals-main-label" data-i18n="goalsMainLabel">Жалпы мақсат</p>
+          <p class="goals-main-body" data-i18n="goalsMain">Кәсіпорынның автоматтандырылған жүйесінде ақпаратты қорғауға арналған әдістемені әзірлеу.</p>
+        </div>
+        <div>
+          <p class="goals-tasks-label" data-i18n="goalsTasksLabel">5 міндет</p>
+          <ol class="task-list">
+            <li><span class="n">01</span><span data-i18n="goalsTask1">Тұтас қауіпсіздік саясатын жасау және тәжірибеге енгізу</span></li>
+            <li><span class="n">02</span><span data-i18n="goalsTask2">Ағымдағы қауіпсіздік осалдықтарын анықтау және талдау</span></li>
+            <li><span class="n">03</span><span data-i18n="goalsTask3">Қызметкерлерге қауіпсіз ақпаратпен жұмыс дағдыларын үйрету</span></li>
+            <li><span class="n">04</span><span data-i18n="goalsTask4">Фишинг, вишинг шабуылдарынан техникалық қорғау механизмдерін енгізу</span></li>
+            <li><span class="n">05</span><span data-i18n="goalsTask5">Оқиғаларға жедел әрекет ету жоспарларын әзірлеу</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== NOVELTY ====== -->
+  <section id="novelty" class="reveal" aria-labelledby="novelty-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">03</span><span class="slash">/</span><span data-i18n="noveltyEyebrow">Ғылыми жаңалығы</span></div>
+        <div><h2 class="h-sec" id="novelty-title" data-i18n="noveltyTitle">Жаңа не ұсынылды.</h2></div>
+      </div>
+
+      <div class="novelty-grid">
+        <div class="novelty-card">
+          <p class="marker">N.01</p>
+          <h3 data-i18n="novelty1Title">Кешенді әдістеме</h3>
+          <p data-i18n="novelty1Body">Заманауи шабуыл түрлеріне қарсы тұра алатын, психологиялық, ұйымдастырушылық және техникалық аспектілерді біріктіретін қорғаныс әдістемесі.</p>
+        </div>
+        <div class="novelty-card">
+          <p class="marker">N.02</p>
+          <h3 data-i18n="novelty2Title">Оқыту платформасы</h3>
+          <p data-i18n="novelty2Body">Фишинг симуляциясы мен оқыту нәтижелерін ортақ платформада біріктіретін бағдарламалық шешім.</p>
+        </div>
+        <div class="novelty-card">
+          <p class="marker">N.03</p>
+          <h3 data-i18n="novelty3Title">Дейін / кейін талдау</h3>
+          <p data-i18n="novelty3Body">Оқу нәтижелілігін 15 күндік кесу нүктесі негізінде сандық тұрғыдан бағалайтын дейін-кейін салыстырмалы талдау жүйесі.</p>
+        </div>
+        <div class="novelty-card">
+          <p class="marker">N.04</p>
+          <h3 data-i18n="novelty4Title">Қазақ тілінде</h3>
+          <p data-i18n="novelty4Body">Қазақ тілін толықтай қолдайтын, отандық кәсіпорындарға арналған алғашқы ашық кодты SE-оқыту платформасы.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== ATTACKS ====== -->
+  <section id="attacks" class="reveal" aria-labelledby="attacks-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">04</span><span class="slash">/</span><span data-i18n="attacksEyebrow">1-тарау</span></div>
+        <div><h2 class="h-sec" id="attacks-title" data-i18n="attacksTitle">Әлеуметтік инженерия түрлері.</h2></div>
+        <p class="sec-lead" data-i18n="attacksLead">Бар-жоғы алты тип негізгі шабуылдардың 90 пайыздан астамын құрайды.</p>
+      </div>
+
+      <table class="table" aria-describedby="attacks-title">
+        <thead>
+          <tr>
+            <th data-i18n="attacksColType">Шабуыл түрі</th>
+            <th data-i18n="attacksColDesc">Сипаттамасы</th>
+            <th data-i18n="attacksColRisk">Қауіп</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name"><span class="hash">01</span><span data-i18n="attacksRow1Name">Фишинг</span></td>
+            <td class="desc" data-i18n="attacksRow1Desc">Жалған электрондық хаттар арқылы құпия деректерді алу</td>
+            <td><span class="pill high" data-i18n="attacksRow1Risk">Жоғары</span></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="hash">02</span><span data-i18n="attacksRow2Name">Вишинг</span></td>
+            <td class="desc" data-i18n="attacksRow2Desc">Телефон қоңырауы арқылы алдау</td>
+            <td><span class="pill high" data-i18n="attacksRow2Risk">Жоғары</span></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="hash">03</span><span data-i18n="attacksRow3Name">Претекстинг</span></td>
+            <td class="desc" data-i18n="attacksRow3Desc">Жалған сылтау құру арқылы сенім орнату</td>
+            <td><span class="pill mid" data-i18n="attacksRow3Risk">Орта</span></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="hash">04</span><span data-i18n="attacksRow4Name">Бейтинг</span></td>
+            <td class="desc" data-i18n="attacksRow4Desc">Жемді пайдалану. USB, тегін бағдарлама</td>
+            <td><span class="pill mid" data-i18n="attacksRow4Risk">Орта</span></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="hash">05</span><span data-i18n="attacksRow5Name">Тейлгейтинг</span></td>
+            <td class="desc" data-i18n="attacksRow5Desc">Рұқсатсыз аумаққа физикалық кіру</td>
+            <td><span class="pill low" data-i18n="attacksRow5Risk">Төмен</span></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="hash">06</span><span data-i18n="attacksRow6Name">Смишинг</span></td>
+            <td class="desc" data-i18n="attacksRow6Desc">SMS хабарлама арқылы фишинг</td>
+            <td><span class="pill high" data-i18n="attacksRow6Risk">Жоғары</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="principles">
+        <p class="lbl" data-i18n="attacksPrinciplesTitle">Адамға ықпал ету принциптері</p>
+        <p class="body" data-i18n="attacksPrinciples">сенімді пайдалану · психологиялық қысым · билік аргументі · тапшылық сезімі · ашық дереккөздерді барлау</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== VULNS ====== -->
+  <section id="vulns" class="reveal" aria-labelledby="vulns-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">05</span><span class="slash">/</span><span data-i18n="vulnsEyebrow">2-тарау</span></div>
+        <div><h2 class="h-sec" id="vulns-title" data-i18n="vulnsTitle">АБЖ осалдықтары.</h2></div>
+        <p class="sec-lead" data-i18n="vulnsLead">Осалдықтар үш қабатта. Бірін жабу басқасын ашпайды.</p>
+      </div>
+
+      <div class="vulns-grid">
+        <div class="vuln-col">
+          <p class="head">L01</p>
+          <h3 data-i18n="vulnsCol1Title">Адам факторы</h3>
+          <ul>
+            <li data-i18n="vulnsCol1Item1">Қызметкер қателіктері</li>
+            <li data-i18n="vulnsCol1Item2">Әлсіз парольдер</li>
+            <li data-i18n="vulnsCol1Item3">Құпия деректі қорғамау</li>
+          </ul>
+        </div>
+        <div class="vuln-col">
+          <p class="head">L02</p>
+          <h3 data-i18n="vulnsCol2Title">Ұйымдастырушылық</h3>
+          <ul>
+            <li data-i18n="vulnsCol2Item1">Рөлдердің дұрыс үлестірілмеуі</li>
+            <li data-i18n="vulnsCol2Item2">Бақылау жеткіліксіздігі</li>
+            <li data-i18n="vulnsCol2Item3">Қауіпсіздік стандарттарының жоқтығы</li>
+          </ul>
+        </div>
+        <div class="vuln-col">
+          <p class="head">L03</p>
+          <h3 data-i18n="vulnsCol3Title">Техникалық</h3>
+          <ul>
+            <li data-i18n="vulnsCol3Item1">АБЖ ашықтығы</li>
+            <li data-i18n="vulnsCol3Item2">TCP/IP хаттамалары</li>
+            <li data-i18n="vulnsCol3Item3">Сыртқы интеграциялар</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="weak-box">
+        <p class="head" data-i18n="vulnsWeakTitle">Қолданыстағы қорғаудың кемшіліктері</p>
+        <div class="weak-list">
+          <div class="weak-item">
+            <p class="name" data-i18n="vulnsWeak1Name">Антивирустар</p>
+            <p class="body" data-i18n="vulnsWeak1Body">Нөлдік күн осалдықтарына қарсы шарасыз.</p>
+          </div>
+          <div class="weak-item">
+            <p class="name" data-i18n="vulnsWeak2Name">2FA</p>
+            <p class="body" data-i18n="vulnsWeak2Body">Фишинг арқылы SIM ауыстыру мүмкін.</p>
+          </div>
+          <div class="weak-item">
+            <p class="name" data-i18n="vulnsWeak3Name">Шифрлау</p>
+            <p class="body" data-i18n="vulnsWeak3Body">Дұрыс енгізілмесе, әлсіз кілттер қауіп тудырады.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== ARCHITECTURE ====== -->
+  <section id="arch" class="reveal" aria-labelledby="arch-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">06</span><span class="slash">/</span><span data-i18n="archEyebrow">3-тарау</span></div>
+        <div><h2 class="h-sec" id="arch-title" data-i18n="archTitle">Жүйенің архитектурасы.</h2></div>
+        <p class="sec-lead" data-i18n="archLead">Бес қабатты Spring-стек. Әр қабат бір ғана міндет атқарады.</p>
+      </div>
+
+      <div class="arch-grid">
+        <div class="layers">
+          <div class="layer">
+            <div class="name" data-i18n="archLayer1Name">Presentation</div>
+            <div class="tech" data-i18n="archLayer1Tech">Thymeleaf + HTML / CSS</div>
+          </div>
+          <div class="layer">
+            <div class="name" data-i18n="archLayer2Name">Controller</div>
+            <div class="tech" data-i18n="archLayer2Tech">Spring MVC, REST</div>
+          </div>
+          <div class="layer">
+            <div class="name" data-i18n="archLayer3Name">Service</div>
+            <div class="tech" data-i18n="archLayer3Tech">Бизнес-логика, транзакциялар</div>
+          </div>
+          <div class="layer">
+            <div class="name" data-i18n="archLayer4Name">Repository</div>
+            <div class="tech" data-i18n="archLayer4Tech">Spring Data JPA, JPQL</div>
+          </div>
+          <div class="layer">
+            <div class="name" data-i18n="archLayer5Name">Database</div>
+            <div class="tech" data-i18n="archLayer5Tech">H2 / MySQL / PostgreSQL</div>
+          </div>
+        </div>
+
+        <div>
+          <p class="stack-head" data-i18n="archStackTitle">Технологиялар</p>
+          <div class="stack-tags">
+            <div class="stack-tag">
+              <span class="name" data-i18n="archStack1Name">Java 17 LTS</span>
+              <span class="role" data-i18n="archStack1Role">Бағдарламалау тілі</span>
+            </div>
+            <div class="stack-tag">
+              <span class="name" data-i18n="archStack2Name">Spring Boot 3.2</span>
+              <span class="role" data-i18n="archStack2Role">Микросервистік фреймворк</span>
+            </div>
+            <div class="stack-tag">
+              <span class="name" data-i18n="archStack3Name">Spring Security 6.2</span>
+              <span class="role" data-i18n="archStack3Role">Аутентификация, CSRF</span>
+            </div>
+            <div class="stack-tag">
+              <span class="name" data-i18n="archStack4Name">Chart.js 4.4</span>
+              <span class="role" data-i18n="archStack4Role">Диаграммалар</span>
+            </div>
+            <div class="stack-tag">
+              <span class="name" data-i18n="archStack5Name">BCrypt</span>
+              <span class="role" data-i18n="archStack5Role">Құпия сөздерді хэштеу</span>
+            </div>
+            <div class="stack-tag">
+              <span class="name" data-i18n="archStack6Name">Docker</span>
+              <span class="role" data-i18n="archStack6Role">Контейнерлеу</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== PLATFORM ====== -->
+  <section id="platform" class="reveal" aria-labelledby="platform-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">07</span><span class="slash">/</span><span data-i18n="platformEyebrow">Жүзеге асыру</span></div>
+        <div><h2 class="h-sec" id="platform-title" data-i18n="platformTitle">Платформа не істейді.</h2></div>
+        <p class="sec-lead" data-i18n="platformLead">Әкімші тақтасынан фишинг симуляциясына дейін, бәрі бір платформада.</p>
+      </div>
+
+      <div class="plat-grid">
+        <div class="plat-card">
+          <p class="num">.01</p>
+          <h3 data-i18n="platformF1Title">Әкімші тақтасы</h3>
+          <p data-i18n="platformF1Body">Барлық қызметкер, тест, симуляция нәтижесін бір тақтадан басқару.</p>
+        </div>
+        <div class="plat-card">
+          <p class="num">.02</p>
+          <h3 data-i18n="platformF2Title">Оқу модульдері</h3>
+          <p data-i18n="platformF2Body">Фишинг, вишинг, парольдер, инциденттер. Қазақ тілінде.</p>
+        </div>
+        <div class="plat-card">
+          <p class="num">.03</p>
+          <h3 data-i18n="platformF3Title">Тестілеу</h3>
+          <p data-i18n="platformF3Body">4 тест × 20 сұрақ = 80 сұрақ. Өту шегі 70% (әкімші баптайды).</p>
+        </div>
+        <div class="plat-card">
+          <p class="num">.04</p>
+          <h3 data-i18n="platformF4Title">Фишинг симуляциясы</h3>
+          <p data-i18n="platformF4Body">5 үлгі, EASY → HARD. UUID токенмен әр қызметкер жеке бақыланады.</p>
+        </div>
+        <div class="plat-card">
+          <p class="num">.05</p>
+          <h3 data-i18n="platformF5Title">Ішкі пошта жәшігі</h3>
+          <p data-i18n="platformF5Body">Қызметкерлер фишинг хаттарын платформа ішінде ашады, талдайды, хабарлайды.</p>
+        </div>
+        <div class="plat-card">
+          <p class="num">.06</p>
+          <h3 data-i18n="platformF6Title">106 пайдаланушы, 7 бөлімше</h3>
+          <p data-i18n="platformF6Body">Қазақ тіліндегі шынайы аттар мен лауазымдар.</p>
+        </div>
+      </div>
+
+      <div class="sec-block">
+        <div class="title-row">
+          <h3 data-i18n="platformSecTitle">Қауіпсіздік архитектурасы</h3>
+          <span class="sub" data-i18n="platformSecLead">Spring Security 6.x негізінде. Principle of Least Privilege қағидаты.</span>
+        </div>
+        <div class="sec-rings">
+          <div class="sec-ring">
+            <p class="name" data-i18n="platformSec1Name">BCrypt</p>
+            <p class="body" data-i18n="platformSec1Body">Salt + 1024 итерация хэштеу.</p>
+          </div>
+          <div class="sec-ring">
+            <p class="name" data-i18n="platformSec2Name">CSRF</p>
+            <p class="body" data-i18n="platformSec2Body">Токен негізінде қорғау.</p>
+          </div>
+          <div class="sec-ring">
+            <p class="name" data-i18n="platformSec3Name">Рөлдер</p>
+            <p class="body" data-i18n="platformSec3Body">ADMIN / EMPLOYEE.</p>
+          </div>
+          <div class="sec-ring">
+            <p class="name" data-i18n="platformSec4Name">SQL injection</p>
+            <p class="body" data-i18n="platformSec4Body">Параметрленген сұраулар.</p>
+          </div>
+          <div class="sec-ring">
+            <p class="name" data-i18n="platformSec5Name">XSS</p>
+            <p class="body" data-i18n="platformSec5Body">Thymeleaf автоэкрандау.</p>
+          </div>
+          <div class="sec-ring">
+            <p class="name" data-i18n="platformSec6Name">Defense-in-Depth</p>
+            <p class="body" data-i18n="platformSec6Body">Көп қабатты қорғаныс.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cert-strip">
+        <span class="lbl" data-i18n="platformCertTitle">Сертификат алу шарты</span>
+        <span class="body" data-i18n="platformCertBody">Барлық модульдерді аяқтау + барлық тесттерді сәтті тапсыру.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== RESULTS ====== -->
+  <section id="results" class="reveal" aria-labelledby="results-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">08</span><span class="slash">/</span><span data-i18n="resultsEyebrow">Енгізу нәтижелері</span></div>
+        <div><h2 class="h-sec" id="results-title" data-i18n="resultsTitle">Дейін. Кейін.</h2></div>
+        <p class="sec-lead" data-i18n="resultsLead">Платформа 7 бөлімшеде 15 күн ішінде сыналды.</p>
+      </div>
+
+      <div class="results-grid" role="list">
+        <div class="row" role="listitem">
+          <div class="metric-name" data-i18n="resultsMetric1">Хат ашу</div>
+          <div class="arrow" aria-hidden="true">&gt;</div>
+          <div class="bar-wrap"><div class="fill warn" data-value="33.2"></div></div>
+          <div class="delta warn"><span data-i18n="resultsMetric1Delta">-33.2</span>%</div>
+        </div>
+        <div class="row" role="listitem">
+          <div class="metric-name" data-i18n="resultsMetric2">Сілтеме басу</div>
+          <div class="arrow" aria-hidden="true">&gt;</div>
+          <div class="bar-wrap"><div class="fill warn" data-value="29.3"></div></div>
+          <div class="delta warn"><span data-i18n="resultsMetric2Delta">-29.3</span>%</div>
+        </div>
+        <div class="row" role="listitem">
+          <div class="metric-name" data-i18n="resultsMetric3">Деректер енгізу</div>
+          <div class="arrow" aria-hidden="true">&gt;</div>
+          <div class="bar-wrap"><div class="fill warn" data-value="23.4"></div></div>
+          <div class="delta warn"><span data-i18n="resultsMetric3Delta">-23.4</span>%</div>
+        </div>
+        <div class="row" role="listitem">
+          <div class="metric-name" data-i18n="resultsMetric4">Фишинг туралы хабарлау</div>
+          <div class="arrow" aria-hidden="true">&gt;</div>
+          <div class="bar-wrap"><div class="fill" data-value="48.3"></div></div>
+          <div class="delta good"><span data-i18n="resultsMetric4Delta">+48.3</span>%</div>
+        </div>
+        <div class="row" role="listitem">
+          <div class="metric-name" data-i18n="resultsMetric5">Тест балы</div>
+          <div class="arrow" aria-hidden="true">&gt;</div>
+          <div class="bar-wrap"><div class="fill" data-value="32.5"></div></div>
+          <div class="delta good"><span data-i18n="resultsMetric5Delta">+32.5</span>%</div>
+        </div>
+      </div>
+
+      <div class="results-meta">
+        <span data-i18n="resultsContext">105 қызметкер · 7 бөлімше · 15 күн</span>
+        <span data-i18n="resultsCaption">SANS Maturity 2 → 3</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== DEPARTMENTS ====== -->
+  <section id="depts" class="reveal" aria-labelledby="depts-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">09</span><span class="slash">/</span><span data-i18n="deptsEyebrow">Бөлімшелер бойынша</span></div>
+        <div><h2 class="h-sec" id="depts-title" data-i18n="deptsTitle">Кім жақсы ұстады.</h2></div>
+        <p class="sec-lead" data-i18n="deptsLead">IT бөлімі ең жоғары нәтиже көрсетті. HR бөліміне қосымша оқыту бағдарламасы қажет.</p>
+      </div>
+
+      <div class="cmp-wrap">
+        <table class="dept-table">
+          <thead>
+            <tr>
+              <th data-i18n="deptsCol1">Бөлімше</th>
+              <th class="num-col" data-i18n="deptsCol2">Тест балы</th>
+              <th class="num-col" data-i18n="deptsCol3">Сілтеме басу</th>
+              <th class="num-col" data-i18n="deptsCol4">Хабарлау</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="dept-name"><span class="rank">01</span><span data-i18n="deptsRow1">IT бөлімі</span></td>
+              <td class="dept-num"><span class="dept-cell up"><span class="val">91.2%</span><span class="spark"><span class="seg" style="width:91.2%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell up"><span class="val">4.3%</span><span class="spark"><span class="seg" style="width:4.3%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell up"><span class="val">72.1%</span><span class="spark"><span class="seg" style="width:72.1%"></span></span></span></td>
+            </tr>
+            <tr>
+              <td class="dept-name"><span class="rank">02</span><span data-i18n="deptsRow2">Қаржы бөлімі</span></td>
+              <td class="dept-num"><span class="dept-cell up"><span class="val">87.4%</span><span class="spark"><span class="seg" style="width:87.4%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell up"><span class="val">8.1%</span><span class="spark"><span class="seg" style="width:8.1%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell up"><span class="val">63.5%</span><span class="spark"><span class="seg" style="width:63.5%"></span></span></span></td>
+            </tr>
+            <tr>
+              <td class="dept-name"><span class="rank">03</span><span data-i18n="deptsRow3">Құқықтық бөлім</span></td>
+              <td class="dept-num"><span class="dept-cell up"><span class="val">85.9%</span><span class="spark"><span class="seg" style="width:85.9%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell up"><span class="val">9.7%</span><span class="spark"><span class="seg" style="width:9.7%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell flat"><span class="val">58.2%</span><span class="spark"><span class="seg" style="width:58.2%"></span></span></span></td>
+            </tr>
+            <tr>
+              <td class="dept-name"><span class="rank">04</span><span data-i18n="deptsRow4">Сатып алу бөлімі</span></td>
+              <td class="dept-num"><span class="dept-cell flat"><span class="val">83.2%</span><span class="spark"><span class="seg" style="width:83.2%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell flat"><span class="val">12.4%</span><span class="spark"><span class="seg" style="width:12.4%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell flat"><span class="val">54.8%</span><span class="spark"><span class="seg" style="width:54.8%"></span></span></span></td>
+            </tr>
+            <tr>
+              <td class="dept-name"><span class="rank">05</span><span data-i18n="deptsRow5">Басқарма</span></td>
+              <td class="dept-num"><span class="dept-cell flat"><span class="val">82.7%</span><span class="spark"><span class="seg" style="width:82.7%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell flat"><span class="val">14.2%</span><span class="spark"><span class="seg" style="width:14.2%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell flat"><span class="val">51.3%</span><span class="spark"><span class="seg" style="width:51.3%"></span></span></span></td>
+            </tr>
+            <tr>
+              <td class="dept-name"><span class="rank">06</span><span data-i18n="deptsRow6">Маркетинг бөлімі</span></td>
+              <td class="dept-num"><span class="dept-cell flat"><span class="val">80.1%</span><span class="spark"><span class="seg" style="width:80.1%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell down"><span class="val">16.8%</span><span class="spark"><span class="seg" style="width:16.8%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell down"><span class="val">48.7%</span><span class="spark"><span class="seg" style="width:48.7%"></span></span></span></td>
+            </tr>
+            <tr>
+              <td class="dept-name"><span class="rank">07</span><span data-i18n="deptsRow7">HR бөлімі</span></td>
+              <td class="dept-num"><span class="dept-cell down"><span class="val">73.8%</span><span class="spark"><span class="seg" style="width:73.8%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell down"><span class="val">21.5%</span><span class="spark"><span class="seg" style="width:21.5%"></span></span></span></td>
+              <td class="dept-num"><span class="dept-cell down"><span class="val">42.1%</span><span class="spark"><span class="seg" style="width:42.1%"></span></span></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== RISK ====== -->
+  <section id="risk" class="reveal" aria-labelledby="risk-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">10</span><span class="slash">/</span><span data-i18n="riskEyebrow">Тәуекелдер картасы</span></div>
+        <div><h2 class="h-sec" id="risk-title" data-i18n="riskTitle">Тәуекел деңгейінің өзгеруі.</h2></div>
+        <p class="sec-lead" data-i18n="riskLead">SANS Security Awareness Maturity Model бойынша.</p>
+      </div>
+
+      <div class="risk-list">
+        <div class="risk-row">
+          <div class="risk-metric" data-i18n="riskRow1Name">Сілтеме басу</div>
+          <div class="risk-side from">
+            <span class="head" data-i18n="riskFromHead">Дейін</span>
+            <div class="val-row"><span class="val">41.8%</span><span class="lbl" data-i18n="riskRow1FromLabel">КРИТИКАЛЫҚ</span></div>
+          </div>
+          <div class="risk-arrow" aria-hidden="true">→</div>
+          <div class="risk-side to high">
+            <span class="head" data-i18n="riskToHead">Кейін</span>
+            <div class="val-row"><span class="val">12.5%</span><span class="lbl" data-i18n="riskRow1ToLabel">ОРТА</span></div>
+          </div>
+        </div>
+        <div class="risk-row">
+          <div class="risk-metric" data-i18n="riskRow2Name">Деректер енгізу</div>
+          <div class="risk-side from mid">
+            <span class="head" data-i18n="riskFromHead">Дейін</span>
+            <div class="val-row"><span class="val">28.6%</span><span class="lbl" data-i18n="riskRow2FromLabel">ЖОҒАРЫ</span></div>
+          </div>
+          <div class="risk-arrow" aria-hidden="true">→</div>
+          <div class="risk-side to">
+            <span class="head" data-i18n="riskToHead">Кейін</span>
+            <div class="val-row"><span class="val">5.2%</span><span class="lbl" data-i18n="riskRow2ToLabel">ТӨМЕН</span></div>
+          </div>
+        </div>
+        <div class="risk-row">
+          <div class="risk-metric" data-i18n="riskRow3Name">Хабарлау</div>
+          <div class="risk-side from">
+            <span class="head" data-i18n="riskFromHead">Дейін</span>
+            <div class="val-row"><span class="val">8.4%</span><span class="lbl" data-i18n="riskRow3FromLabel">КРИТИКАЛЫҚ</span></div>
+          </div>
+          <div class="risk-arrow" aria-hidden="true">→</div>
+          <div class="risk-side to high">
+            <span class="head" data-i18n="riskToHead">Кейін</span>
+            <div class="val-row"><span class="val">56.7%</span><span class="lbl" data-i18n="riskRow3ToLabel">ЖОҒАРЫ</span></div>
+          </div>
+        </div>
+        <div class="risk-row">
+          <div class="risk-metric" data-i18n="riskRow4Name">Тест балы</div>
+          <div class="risk-side from mid">
+            <span class="head" data-i18n="riskFromHead">Дейін</span>
+            <div class="val-row"><span class="val">52.1%</span><span class="lbl" data-i18n="riskRow4FromLabel">ОРТА</span></div>
+          </div>
+          <div class="risk-arrow" aria-hidden="true">→</div>
+          <div class="risk-side to">
+            <span class="head" data-i18n="riskToHead">Кейін</span>
+            <div class="val-row"><span class="val">84.6%</span><span class="lbl" data-i18n="riskRow4ToLabel">ТӨМЕН ТӘУЕКЕЛ</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="risk-foot">SANS Security Awareness Maturity Model: <b>level 2 → level 3</b></div>
+    </div>
+  </section>
+
+  <!-- ====== COMPARE ====== -->
+  <section id="compare" class="reveal" aria-labelledby="compare-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">11</span><span class="slash">/</span><span data-i18n="compareEyebrow">Нарықтағы орны</span></div>
+        <div><h2 class="h-sec" id="compare-title" data-i18n="compareTitle">Біздің vs Коммерциялық.</h2></div>
+        <p class="sec-lead" data-i18n="compareLead">Тегін, ашық кодты, қазақ тілінде.</p>
+      </div>
+
+      <div class="cmp-wrap">
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th data-i18n="compareColCriterion">Критерий</th>
+              <th class="ours" data-i18n="compareColOurs">Біздің платформа</th>
+              <th data-i18n="compareColKnow">KnowBe4</th>
+              <th data-i18n="compareColCof">Cofense</th>
+              <th data-i18n="compareColProof">Proofpoint</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-i18n="compareR1">Бағасы</td>
+              <td class="ours" data-i18n="compareR1Ours">Тегін (ашық код)</td>
+              <td data-i18n="compareR1Know">Ақылы (жоғары)</td>
+              <td data-i18n="compareR1Cof">Ақылы (орта)</td>
+              <td data-i18n="compareR1Proof">Ақылы (жоғары)</td>
+            </tr>
+            <tr>
+              <td data-i18n="compareR2">Қазақ тілі</td>
+              <td class="ours" data-i18n="compareR2Ours">Толық қолдау</td>
+              <td data-i18n="compareR2Know">Жоқ</td>
+              <td data-i18n="compareR2Cof">Жоқ</td>
+              <td data-i18n="compareR2Proof">Жоқ</td>
+            </tr>
+            <tr>
+              <td data-i18n="compareR3">Фишинг симуляция</td>
+              <td class="ours" data-i18n="compareR3Ours">5 үлгі</td>
+              <td data-i18n="compareR3Know">1000+</td>
+              <td data-i18n="compareR3Cof">100+</td>
+              <td data-i18n="compareR3Proof">100+</td>
+            </tr>
+            <tr>
+              <td data-i18n="compareR4">Дейін / кейін талдау</td>
+              <td class="ours" data-i18n="compareR4Ours">Бар</td>
+              <td data-i18n="compareR4Know">Бар</td>
+              <td data-i18n="compareR4Cof">Жоқ</td>
+              <td data-i18n="compareR4Proof">Жоқ</td>
+            </tr>
+            <tr>
+              <td data-i18n="compareR5">Сұрақтар талдауы</td>
+              <td class="ours" data-i18n="compareR5Ours">Бар</td>
+              <td data-i18n="compareR5Know">Жоқ</td>
+              <td data-i18n="compareR5Cof">Жоқ</td>
+              <td data-i18n="compareR5Proof">Жоқ</td>
+            </tr>
+            <tr>
+              <td data-i18n="compareR6">Кеңейту</td>
+              <td class="ours" data-i18n="compareR6Ours">Оңай (Spring)</td>
+              <td data-i18n="compareR6Know">Шектеулі</td>
+              <td data-i18n="compareR6Cof">Шектеулі</td>
+              <td data-i18n="compareR6Proof">Шектеулі</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="roi-strip">
+        <div class="roi"><span class="count" data-target="220" data-dec="0">0</span>%</div>
+        <p class="body"><b>ROI 180 - 220%</b> бірінші жылдың соңында. Коммерциялық баламалардан 3 - 4 есе үнемді.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CONCLUSION ====== -->
+  <section id="conclusion" class="reveal" aria-labelledby="conclusion-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="meta"><span class="num">12</span><span class="slash">/</span><span data-i18n="conclusionEyebrow">Қорытынды</span></div>
+        <div><h2 class="h-sec" id="conclusion-title" data-i18n="conclusionTitle">Алты тұжырым.</h2></div>
+      </div>
+
+      <div class="conc-grid">
+        <div class="conc-item"><p data-i18n="conclusionPoint1">Әлеуметтік инженерия заманауи киберқауіптердің ең қауіптілерінің бірі, адам факторына негізделген.</p></div>
+        <div class="conc-item"><p data-i18n="conclusionPoint2">Кешенді әдістеме әзірленді: ұйымдастырушылық, техникалық, психологиялық қорғаныс.</p></div>
+        <div class="conc-item"><p data-i18n="conclusionPoint3">Social Engineering Training Platform веб-платформасы іске асырылды (Spring Boot, Java 17).</p></div>
+        <div class="conc-item"><p data-i18n="conclusionPoint4">Оқыту нәтижелері: фишинг басу -29.3%, деректер енгізу -23.4%, хабарлау +48.3%.</p></div>
+        <div class="conc-item"><p data-i18n="conclusionPoint5">Тәуекел деңгейі Критикалық деңгейден Орта деңгейге түсті.</p></div>
+        <div class="conc-item"><p data-i18n="conclusionPoint6">Платформа отандық кәсіпорындарға қазақ тілінде толық қолжетімді, ашық бастапқы код.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== THANKS ====== -->
+  <section class="thanks reveal" aria-labelledby="thanks-title">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="thanksEyebrow">Назарларыңызға</p>
+      <h2 class="h-thanks" id="thanks-title">
+        <span class="accent" data-i18n="thanksTitle">Рахмет.</span>
+      </h2>
+      <p class="thanks-body" data-i18n="thanksBody">Сұрақтарыңызға дайынмын.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap foot">
+      <div>
+        <div class="who" data-i18n="footerByline">Маратов Бауыржан Жанатович</div>
+        <div class="meta-list">
+          <span class="uni" data-i18n="footerUni">Л.Н. Гумилев атындағы Еуразия ұлттық университеті</span>
+          <span data-i18n="footerDegree">7M06306 · Ақпараттық қауіпсіздік жүйелері</span>
+          <span data-i18n="footerSupervisor">Ғылыми жетекші: Сагиндыков К.М.</span>
+          <span data-i18n="footerPlace">Астана, 2026</span>
+        </div>
+      </div>
+      <p class="note" data-i18n="footerNote">Магистрлік диссертация. Толық жұмыс PDF форматында ұсынылады.</p>
+    </div>
+  </footer>
+
+</main>
+
+<a class="home-link" href="../../index.html">← INDEX</a>
+
+<script src="../../shared/i18n.js"></script>
+<script src="../../shared/observers.js"></script>
+</body>
+</html>
